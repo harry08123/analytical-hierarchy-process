@@ -22,7 +22,13 @@ public class Controller {
 	}
 	
 	@RequestMapping(value="/new",method=RequestMethod.GET)
-	public ModelAndView doGetew(HttpServletRequest request , HttpServletResponse response ) {
+	public ModelAndView doGetview(HttpServletRequest request , HttpServletResponse response ) {
+		return new ModelAndView("new", "message", "a test" );
+	}
+	
+	//ImsHumanPersist bean, @RequestParam String dn
+	@RequestMapping(value="/new",method=RequestMethod.POST)
+	public ModelAndView doPostview(  HttpServletRequest request , HttpServletResponse response ) {
 		return new ModelAndView("new", "message", "a test" );
 	}
 

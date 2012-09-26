@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -76,6 +77,10 @@ body {
 					All you get is this message and a barebones HTML document.
 				</p>
 				<p>
+				<sql:query var="rs" dataSource="jdbc/ahp">
+					select name, description from project
+				</sql:query>
+				
 				<table class="table table-striped">
 					<thead>
 						<tr>
@@ -84,18 +89,12 @@ body {
 						</tr>
 					</thead>
 					<tbody>
-						<tr>
-							<td>...</td>
-							<td>...</td>
-						</tr>
-						<tr>
-							<td>...</td>
-							<td>...</td>
-						</tr>
-						<tr>
-							<td>...</td>
-							<td>...</td>
-						</tr>
+						<c:forEach var="row" items="${rs.rows}">
+					    <tr> 
+					    	<td>${row.name}</td>
+					    	<td>${row.description}</td>
+					    </tr>
+						</c:forEach>
 					</tbody>
 				</table>
 			</div>
