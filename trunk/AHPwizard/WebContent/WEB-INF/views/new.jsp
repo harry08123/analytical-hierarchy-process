@@ -71,9 +71,15 @@ body {
 		</div>
 		<form class="form-horizontal">
 			<div class="control-group">
-				<label class="control-label" for="inputEmail">Name</label>
+				<label class="control-label" for="name">Name</label>
 				<div class="controls">
-					<input type="text" id="inputEmail" placeholder="name">
+					<input type="text" id="name" placeholder="name">
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="description">Description</label>
+				<div class="controls">
+					<input type="text" id="description" placeholder="description">
 				</div>
 			</div>
 			<div class="control-group">
