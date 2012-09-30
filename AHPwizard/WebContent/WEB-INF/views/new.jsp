@@ -69,28 +69,29 @@ body {
 				AHP <small>Create a new project</small>
 			</h1>
 		</div>
-		<form class="form-horizontal">
+		<form class="form-horizontal" method="post" action="new">
 			<div class="control-group">
 				<label class="control-label" for="name">Name</label>
 				<div class="controls">
-					<input type="text" id="name" placeholder="name">
+					<input type="text" id="name" name="name" placeholder="name"/>
 				</div>
 			</div>
 			<div class="control-group">
 				<label class="control-label" for="description">Description</label>
 				<div class="controls">
-					<input type="text" id="description" placeholder="description">
+					<input type="text" id="description" name="description" placeholder="description"/>
 				</div>
 			</div>
 			<div class="control-group">
 				<div class="controls">
 					<div class="btn-group">
-						<button class="btn">Create</button>
-						<button class="btn">Cancel</button>
+						<input class="btn" type="submit" value="Create" />
+						<input class="btn" type="reset" value="Reset"/>
 					</div>
 				</div>
 			</div>
 		</form>
+		${message}
 	</div>
 	<!-- /container -->
 
