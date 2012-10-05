@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import Jama.Matrix;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * A pairwise comparison test class.
  * Jama needs to be on the class path for this to run
@@ -55,7 +55,7 @@ public class Test {
 	 *
 	 * @param i the row
 	 * @param j the column
-	 * @param M the matrixS
+	 * @param M the matrix
 	 * @param value the value
 	 */
 	public static void setPairwise(int i, int j, Matrix M, double value) {
