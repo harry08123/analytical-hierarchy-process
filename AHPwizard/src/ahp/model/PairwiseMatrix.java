@@ -11,22 +11,23 @@ public class PairwiseMatrix {
 	 */
 	private double[][] util;
 	private Matrix backingMatrix;
+	private String[][] labels;
 
-	public PairwiseMatrix( int i, int j) {
-		double[][] array = new double[i][j];
-		double[] column = new double[j];
+	public PairwiseMatrix( int i, String[][] labels) {
+		double[][] array = new double[i][i];
+		double[] column = new double[i];
 		Arrays.fill(column, 1.0);
 		for ( int x=0;x<i;x++){array[x]=column.clone();}
 		backingMatrix = new Matrix(array);
 		util = new double[backingMatrix.getRowDimension()][1];
 		Arrays.fill(util, new double[]{1.0});
+		this.labels = labels;
 	}
 
 	public Matrix getWeights() {
-		backingMatrix.print(backingMatrix.getColumnDimension(),12);			
-		// utility column vector
+		// utility column vector to get sum of columns
 		Matrix O = new Matrix(util);
-		// utility row vector
+		// utility row vector to get sum of rows
 		Matrix N =  O.transpose();
 		// the column vector containing the final weights
 		Matrix W = O.copy();
@@ -43,6 +44,10 @@ public class PairwiseMatrix {
 			if (Arrays.equals(WTEMP.getArray(), W.getArray())) break;
 		}
 		return W;
+	}
+
+	public Matrix getBackingMatrix() {
+		return backingMatrix.copy();
 	}
 
 	public void setPairwise(int i, int j, double value) {
