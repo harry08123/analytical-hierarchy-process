@@ -66,4 +66,10 @@ public class PairwiseMatrix {
 		backingMatrix.set(i, j, s2Value);
 		backingMatrix.set(j, i, 1.0 / s2Value);
 	}
+
+	public String[] getLabels() {
+		return labels;
+	}
+	
+	
 }
