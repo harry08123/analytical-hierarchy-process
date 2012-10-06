@@ -1,4 +1,4 @@
-package ahp.model;
+package tests;
 
 import java.util.Arrays;
 
