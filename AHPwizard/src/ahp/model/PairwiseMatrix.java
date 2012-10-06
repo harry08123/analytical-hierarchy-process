@@ -11,9 +11,9 @@ public class PairwiseMatrix {
 	 */
 	private double[][] util;
 	private Matrix backingMatrix;
-	private String[][] labels;
+	private String[] labels;
 
-	public PairwiseMatrix( int i, String[][] labels) {
+	public PairwiseMatrix( int i, String[] labels) {
 		double[][] array = new double[i][i];
 		double[] column = new double[i];
 		Arrays.fill(column, 1.0);
@@ -22,6 +22,7 @@ public class PairwiseMatrix {
 		util = new double[backingMatrix.getRowDimension()][1];
 		Arrays.fill(util, new double[]{1.0});
 		this.labels = labels;
+		Arrays.sort(this.labels);
 	}
 
 	public Matrix getWeights() {
@@ -50,8 +51,12 @@ public class PairwiseMatrix {
 		return backingMatrix.copy();
 	}
 
-	public void setPairwise(int i, int j, double value) {
-		backingMatrix.set(i, j, value);
-		backingMatrix.set(j, i, 1.0 / value);
+	
+	
+	public void setPairwiseByLabel(String s1, String s2, double s2Value ){
+		int i = Arrays.binarySearch(labels, s1);
+		int j = Arrays.binarySearch(labels, s2);
+		backingMatrix.set(i, j, s2Value);
+		backingMatrix.set(j, i, 1.0 / s2Value);
 	}
 }
