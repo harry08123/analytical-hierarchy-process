@@ -2,6 +2,7 @@ package ahp.model;
 
 public class Objective {
 
-  public String name;
+  private String name;
+  private String description;
 
 }
