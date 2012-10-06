@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import ahp.model.Project;
+import ahp.model.AhpModel;
 
 @org.springframework.stereotype.Controller
 @org.springframework.web.bind.annotation.RequestMapping(value = { "/index",
@@ -47,7 +47,7 @@ public class Controller {
 
 	// @RequestParam String dn
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
-	public ModelAndView doPostview(Project project, HttpServletRequest request,
+	public ModelAndView doPostview(AhpModel project, HttpServletRequest request,
 			HttpServletResponse response) {
 		String message = null;
 		Connection connection = null;
@@ -55,8 +55,8 @@ public class Controller {
 			connection = ds.getConnection();
 			PreparedStatement ps = connection
 					.prepareStatement("INSERT INTO project (name, description) values(?,?)");
-			ps.setString(1, project.getName());
-			ps.setString(2, project.getDescription());
+			ps.setString(1, project.getGoalName());
+			ps.setString(2, project.getGoalDescription());
 			ps.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -71,15 +71,15 @@ body {
 		</div>
 		<form class="form-horizontal" method="post" action="new">
 			<div class="control-group">
-				<label class="control-label" for="name">Name</label>
+				<label class="control-label" for="goalName">Name</label>
 				<div class="controls">
-					<input type="text" id="name" name="name" placeholder="name"/>
+					<input type="text" id="goalName" name="goalName" placeholder="goalName"/>
 				</div>
 			</div>
 			<div class="control-group">
-				<label class="control-label" for="description">Description</label>
+				<label class="control-label" for="goalDescription">Description</label>
 				<div class="controls">
-					<input type="text" id="description" name="description" placeholder="description"/>
+					<input type="text" id="goalDescription" name="goalDescription" placeholder="goalDescription"/>
 				</div>
 			</div>
 			<div class="control-group">
@@ -91,7 +91,6 @@ body {
 				</div>
 			</div>
 		</form>
-		${message}
 	</div>
 	<!-- /container -->
 
