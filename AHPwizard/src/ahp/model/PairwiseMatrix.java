@@ -12,8 +12,10 @@ public class PairwiseMatrix {
 	private double[][] util;
 	private Matrix backingMatrix;
 	private String[] labels;
+	private Matrix W;
 
-	public PairwiseMatrix( int i, String[] labels) {
+	public PairwiseMatrix( String[] labels) {
+		int i = labels.length;
 		double[][] array = new double[i][i];
 		double[] column = new double[i];
 		Arrays.fill(column, 1.0);
@@ -26,12 +28,13 @@ public class PairwiseMatrix {
 	}
 
 	public Matrix getWeights() {
+		if (W != null) return W;
 		// utility column vector to get sum of columns
 		Matrix O = new Matrix(util);
 		// utility row vector to get sum of rows
 		Matrix N =  O.transpose();
 		// the column vector containing the final weights
-		Matrix W = O.copy();
+		W = O.copy();
 		// temporary column vector to hold the changing weights
 		Matrix WTEMP = null;
 		// get the eigenvector for the matrix
@@ -47,6 +50,10 @@ public class PairwiseMatrix {
 		return W;
 	}
 
+	public double getWeightByLabel(String label){
+		return  getWeights().get(Arrays.binarySearch(labels, label), 0);
+	}
+	
 	public Matrix getBackingMatrix() {
 		return backingMatrix.copy();
 	}
