@@ -84,7 +84,6 @@ public class AhpModel {
 		}
 		Matrix m = new Matrix(arrays);
 		Matrix R = m.times(criteria.getWeights());
-
 		for (int x = 0; x < noAlternatives; x++) {
 			result.put(alternativeLabels[x], R.get(Arrays.binarySearch(
 					alternativeLabels, alternativeLabels[x]), 0));

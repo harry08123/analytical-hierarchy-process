@@ -1,6 +1,7 @@
 package tests;
 
 import java.util.Arrays;
+import java.util.Map;
 
 import Jama.Matrix;
 import ahp.model.AhpModel;
@@ -68,7 +69,11 @@ public class TestPairwise {
 		fuelEco.set(Arrays.binarySearch(alternativeLabels, "Clio"), 0, 28.0);
 		model.addToAl("Fuel Econony", fuelEco);
 		
-		model.getResult();
+		Map<String, Double > result = model.getResult();
+		
+		for ( String key : result.keySet()){
+			System.out.println(key + ": " + result.get(key));
+		}
 	}
 
 }
