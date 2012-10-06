@@ -16,16 +16,14 @@ public class TestPairwise {
 	 */
 	public static void main(String[] args) {
 		
-		final int noCriteria = 3;
-		String criteriaLabels[] = new String[noCriteria];
+		String criteriaLabels[] = new String[3];
 		criteriaLabels[0] = "Style";
 		criteriaLabels[1] = "Reliability";
 		criteriaLabels[2] = "Fuel Econony";
 		Arrays.sort(criteriaLabels);
 		
 		// alternative labels
-		final int noAlternatives = 4;
-		String alternativeLabels[] = new String[noAlternatives];
+		String alternativeLabels[] = new String[4];
 		alternativeLabels[0] = "Civic";
 		alternativeLabels[1] = "Saturn";
 		alternativeLabels[2] = "Escort";
@@ -57,12 +55,12 @@ public class TestPairwise {
 		reliability.setPairwiseByLabel("Civic", "Escort", 5.0);
 		reliability.setPairwiseByLabel("Saturn", "Escort", 3.0);
 		reliability.setPairwiseByLabel("Saturn", "Clio", 2.0);
-		reliability.setPairwiseByLabel("Clio", "Civic", 1.0);
+		//reliability.setPairwiseByLabel("Clio", "Civic", 1.0);
 		reliability.setPairwiseByLabel("Clio", "Escort", 4.0);
 		model.addToPw("Reliability", reliability);
 		
 		// Fuel economy is quantitative so no pairwise just the known values;
-		Matrix fuelEco = new Matrix(noAlternatives, 1);
+		Matrix fuelEco = new Matrix(alternativeLabels.length, 1);
 		fuelEco.set(Arrays.binarySearch(alternativeLabels, "Civic"), 0, 34.0);
 		fuelEco.set(Arrays.binarySearch(alternativeLabels, "Saturn"), 0, 27.0);
 		fuelEco.set(Arrays.binarySearch(alternativeLabels, "Escort"), 0, 24.0);
@@ -75,5 +73,4 @@ public class TestPairwise {
 			System.out.println(key + ": " + result.get(key));
 		}
 	}
-
 }
