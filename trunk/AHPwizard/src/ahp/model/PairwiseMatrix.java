@@ -58,8 +58,6 @@ public class PairwiseMatrix {
 		return backingMatrix.copy();
 	}
 
-	
-	
 	public void setPairwiseByLabel(String s1, String s2, double s2Value ){
 		int i = Arrays.binarySearch(labels, s1);
 		int j = Arrays.binarySearch(labels, s2);
@@ -70,6 +68,4 @@ public class PairwiseMatrix {
 	public String[] getLabels() {
 		return labels;
 	}
-	
-	
 }

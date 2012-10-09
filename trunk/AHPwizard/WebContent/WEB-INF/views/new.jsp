@@ -19,7 +19,8 @@ body {
 	/* 60px to make the container go all the way to the bottom of the topbar */
 }
 </style>
-<link href="/AHPwizard/resources/bootstrap-cust/css/bootstrap-responsive.css"
+<link
+	href="/AHPwizard/resources/bootstrap-cust/css/bootstrap-responsive.css"
 	rel="stylesheet">
 
 <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -73,20 +74,22 @@ body {
 			<div class="control-group">
 				<label class="control-label" for="goalName">Name</label>
 				<div class="controls">
-					<input type="text" id="goalName" name="goalName" placeholder="goalName"/>
+					<input type="text" id="goalName" name="goalName"
+						placeholder="goalName" />
 				</div>
 			</div>
 			<div class="control-group">
 				<label class="control-label" for="goalDescription">Description</label>
 				<div class="controls">
-					<input type="text" id="goalDescription" name="goalDescription" placeholder="goalDescription"/>
+					<input type="text" id="goalDescription" name="goalDescription"
+						placeholder="goalDescription" />
 				</div>
 			</div>
 			<div class="control-group">
 				<div class="controls">
 					<div class="btn-group">
-						<input class="btn" type="submit" value="Create" />
-						<input class="btn" type="reset" value="Reset"/>
+						<input class="btn" type="submit" value="Create" /> <input
+							class="btn" type="reset" value="Reset" />
 					</div>
 				</div>
 			</div>
