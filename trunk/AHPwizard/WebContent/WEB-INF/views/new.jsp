@@ -18,6 +18,9 @@ body {
 	padding-top: 60px;
 	/* 60px to make the container go all the way to the bottom of the topbar */
 }
+.slider{
+width:200px;
+}
 </style>
 <link
 	href="/AHPwizard/resources/bootstrap-cust/css/bootstrap-responsive.css"
@@ -39,6 +42,8 @@ body {
 	href="../assets/ico/apple-touch-icon-72-precomposed.png">
 <link rel="apple-touch-icon-precomposed"
 	href="../assets/ico/apple-touch-icon-57-precomposed.png">
+
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.0/themes/base/jquery-ui.css" />
 </head>
 
 <body>
@@ -65,6 +70,11 @@ body {
 	</div>
 
 	<div class="container">
+	
+	
+	
+	<c:choose >
+	<c:when test="${ empty model}">
 		<div class="page-header">
 			<h1>
 				AHP <small>Create a new project</small>
@@ -94,7 +104,52 @@ body {
 				</div>
 			</div>
 		</form>
+		</c:when>
+		<c:when test="${ model.status eq 'ready'}">
+		
+		
+		<div>Model ${model.goalName } is ${model.status}</div>
+		<form class="form-horizontal" method="post" action="evaluate">
+		<table>
+		<c:set var="count" value="1" />
+		<c:forEach items="${model.criteriaLabels }" var="critLabel" >
+		<tr>
+			<th colspan="3"> <c:out value="${critLabel}"></c:out></th>
+		</tr>
+				<c:set var="outerCount" value="${0}" />
+				<c:forEach items="${model.alternativeLabels }" var="altLabel">
+					<c:set var="outerCount" value="${outerCount + 1 }" />
+					<c:set var="innerCount" value="${0}" />
+					<c:forEach items="${model.alternativeLabels }" var="altLabel1">
+						<c:set var="innerCount" value="${innerCount + 1 }" />
+						 <c:if test="${ innerCount gt outerCount }">
+							<tr>
+								<td><c:out value="${altLabel}"></c:out></td>
+								<td><div class="slider"></div></td>
+								<td><c:out value="${altLabel1}"></c:out></td>
+							</tr>
+						</c:if>
+					</c:forEach>
+				</c:forEach>
+		
+		</c:forEach>
+		
+		</table>
+		
+		<input type="submit" >
+		</form>
+		
+		
+		</c:when>
+		<c:when test="${ model.status eq 'complete'}">
+				
+				<div>Model ${model.goalName } is ${model.status}</div>
+		
+		
+		</c:when>
+		</c:choose>
 	</div>
+	
 	<!-- /container -->
 
 	<!-- Le javascript
@@ -102,5 +157,16 @@ body {
 	<!-- Placed at the end of the document so the pages load faster -->
 	<script src="http://code.jquery.com/jquery-latest.js"></script>
 	<script src="/AHPwizard/resources/bootstrap-cust/js/bootstrap.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.0/jquery-ui.js"></script>
+    <script>
+    $(function() {
+        $( ".slider" ).slider({ min:-9, max:9, value:0}).slider({
+        	   slide: function(event, ui) {console.log(ui); }
+        	});
+    });
+    
+    
+    </script>
+	
 </body>
 </html>
