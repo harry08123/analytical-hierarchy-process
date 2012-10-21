@@ -15,13 +15,35 @@ public class AhpModel {
 	private Map<String, Matrix> alternatives = new HashMap<String, Matrix>();
 	private String[] criteriaLabels;
 	private String[] alternativeLabels;
+	private String status;
 
+	public String[] getCriteriaLabels() {
+		return criteriaLabels;
+	}
+
+	public void setCriteriaLabels(String[] criteriaLabels) {
+		this.criteriaLabels = criteriaLabels;
+	}
+
+	public String[] getAlternativeLabels() {
+		return alternativeLabels;
+	}
+
+	public void setAlternativeLabels(String[] alternativeLabels) {
+		this.alternativeLabels = alternativeLabels;
+	}
+
+	public AhpModel() {
+		this.status = "new";
+	}
+	
 	public AhpModel(String goalName, String goalDescription,
 			String[] criteriaLabels, String[] alternativeLabels) {
 		this.goalName = goalName;
 		this.goalDescription = goalDescription;
 		this.criteriaLabels = criteriaLabels;
 		this.alternativeLabels = alternativeLabels;
+		this.status = "new";
 	}
 
 	public String getGoalName() {
@@ -62,8 +84,8 @@ public class AhpModel {
 		double[] util = new double[m.getRowDimension()];
 		Arrays.fill(util, 1.0);
 		Matrix Util = new Matrix(util, util.length);
-		Matrix tmp1 = tmp.times(Util);
-		return m.times(1 / tmp1.get(0, 0));
+		tmp = tmp.times(Util);
+		return m.times(1 / tmp.get(0, 0));
 	}
 
 	public Map<String, Double> getResult() {
@@ -88,7 +110,14 @@ public class AhpModel {
 			result.put(alternativeLabels[x], R.get(Arrays.binarySearch(
 					alternativeLabels, alternativeLabels[x]), 0));
 		}
-
 		return result;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }
