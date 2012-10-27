@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Context>
-
+<!--  
   <Resource name="jdbc/ahp" auth="Container"
   				factory="org.apache.commons.dbcp.BasicDataSourceFactory"
                 type="javax.sql.DataSource" removeAbandoned="true"
@@ -9,5 +9,5 @@
                 password=""
                 driverClassName="com.mysql.jdbc.Driver"
                 url="jdbc:mysql://localhost:3306/ahp"/>
-
+-->
 </Context>

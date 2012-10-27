@@ -2,152 +2,141 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>Create a New Project</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- Le styles -->
-
-<link href="/AHPwizard/resources/bootstrap-cust/css/bootstrap.css"
-	rel="stylesheet">
-<style>
-body {
-	padding-top: 60px;
-	/* 60px to make the container go all the way to the bottom of the topbar */
-}
-.slider{
-width:200px;
-}
-</style>
-<link
-	href="/AHPwizard/resources/bootstrap-cust/css/bootstrap-responsive.css"
-	rel="stylesheet">
-
-<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-<!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
-<!-- Le fav and touch icons -->
-<link rel="shortcut icon" href="../assets/ico/favicon.ico">
-
-<link rel="apple-touch-icon-precomposed" sizes="144x144"
-	href="../assets/ico/apple-touch-icon-144-precomposed.png">
-<link rel="apple-touch-icon-precomposed" sizes="114x114"
-	href="../assets/ico/apple-touch-icon-114-precomposed.png">
-<link rel="apple-touch-icon-precomposed" sizes="72x72"
-	href="../assets/ico/apple-touch-icon-72-precomposed.png">
-<link rel="apple-touch-icon-precomposed"
-	href="../assets/ico/apple-touch-icon-57-precomposed.png">
-
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.0/themes/base/jquery-ui.css" />
+<jsp:include page="header.jsp" />
 </head>
 
 <body>
 
-	<div class="navbar navbar-inverse navbar-fixed-top">
-		<div class="navbar-inner">
-
-			<div class="container">
-				<a class="btn btn-navbar" data-toggle="collapse"
-					data-target=".nav-collapse"> <span class="icon-bar"></span> <span
-					class="icon-bar"></span> <span class="icon-bar"></span>
-				</a> <a class="brand" href="#">AHP</a>
-				<div class="nav-collapse collapse">
-
-					<ul class="nav">
-						<li><a href="index">Projects</a></li>
-						<li class="active"><a href="new">New Project</a></li>
-					</ul>
-				</div>
-				<!--/.nav-collapse -->
-			</div>
-
-		</div>
-	</div>
+	<jsp:include page="topNav.jsp"/>
 
 	<div class="container">
 	
-	
-	
-	<c:choose >
-	<c:when test="${ empty model}">
+	<!--  set the criteria weightings -->
 		<div class="page-header">
 			<h1>
-				AHP <small>Create a new project</small>
+				${model.goalName } <small>${model.goalDescription}</small>
 			</h1>
 		</div>
-		<form class="form-horizontal" method="post" action="new">
-			<div class="control-group">
-				<label class="control-label" for="goalName">Name</label>
-				<div class="controls">
-					<input type="text" id="goalName" name="goalName"
-						placeholder="goalName" />
-				</div>
+	
+	<c:choose >
+		<c:when test="${ empty model}">
+		Select a project from the projects page
+		</c:when>
+		<c:when test="${ model.status eq 'prepare'}">
+		<form class="form-horizontal" method="post" action="prepare">
+			<c:set var="count" value="${1}" />
+			<div id="count_${count}" class="slider_container">
+				<table class="mTable">
+					<c:set var="outerCount" value="${0}" />
+					<c:forEach items="${model.criteriaLabels }" var="altLabel">
+						<c:set var="outerCount" value="${outerCount + 1 }" />
+						<c:set var="innerCount" value="${0}" />
+						<c:forEach items="${model.criteriaLabels }" var="altLabel1">
+							<c:set var="innerCount" value="${innerCount + 1 }" />
+							 <c:if test="${ innerCount gt outerCount }">
+								
+									<tr>
+										<td class="label-td"><c:out value="${altLabel}"></c:out></td>
+										<td><div class="slider" id="${critLabel}:${altLabel}:${altLabel1}"></div></td>
+										<td class="label-td"><c:out value="${altLabel1}"></c:out></td>
+									</tr>
+								
+							</c:if>
+						</c:forEach>
+					</c:forEach>
+				</table>
 			</div>
-			<div class="control-group">
-				<label class="control-label" for="goalDescription">Description</label>
-				<div class="controls">
-					<input type="text" id="goalDescription" name="goalDescription"
-						placeholder="goalDescription" />
-				</div>
-			</div>
-			<div class="control-group">
+			<div class="control-group"  id="count_${count}">
 				<div class="controls">
 					<div class="btn-group">
-						<input class="btn" type="submit" value="Create" /> <input
-							class="btn" type="reset" value="Reset" />
+						<input id="valuePrepare" class="btn" type="button" value="submit"/>
 					</div>
 				</div>
 			</div>
 		</form>
+		
+		<!-- end set the criteria weightings -->
 		</c:when>
 		<c:when test="${ model.status eq 'ready'}">
 		
-		
-		<div>Model ${model.goalName } is ${model.status}</div>
 		<form class="form-horizontal" method="post" action="evaluate">
-		<table>
-		<c:set var="count" value="1" />
+		<c:set var="count" value="${1}" />
+		<c:set var="cTypes" value="${model.criteriaType}" />
 		<c:forEach items="${model.criteriaLabels }" var="critLabel" >
-		<tr>
-			<th colspan="3"> <c:out value="${critLabel}"></c:out></th>
-		</tr>
-				<c:set var="outerCount" value="${0}" />
-				<c:forEach items="${model.alternativeLabels }" var="altLabel">
-					<c:set var="outerCount" value="${outerCount + 1 }" />
-					<c:set var="innerCount" value="${0}" />
-					<c:forEach items="${model.alternativeLabels }" var="altLabel1">
-						<c:set var="innerCount" value="${innerCount + 1 }" />
-						 <c:if test="${ innerCount gt outerCount }">
-							<tr>
-								<td><c:out value="${altLabel}"></c:out></td>
-								<td><div class="slider"></div></td>
-								<td><c:out value="${altLabel1}"></c:out></td>
-							</tr>
-						</c:if>
+		<div id="count_${count}" class="slider_container">
+		<h4><c:out value="${critLabel}"></c:out></h4>
+			<c:choose> 
+				  <c:when test="${cTypes[critLabel] eq 'REAL'}" >
+				  	<table class="mTable">
+							
+				  	<c:forEach items="${model.alternativeLabels }" var="altLabel">
+						<tr>
+							<td class="label-td"><span class="label"><c:out value="${altLabel}"></c:out></span></td>
+							<td><input type="text" class="input_real" id="${critLabel}:${altLabel}"/></td>
+							<td class="label-td" ></td>
+						</tr>			
 					</c:forEach>
-				</c:forEach>
-		
+						
+					</table>
+				  </c:when>
+				  <c:otherwise>
+					  <c:set var="outerCount" value="${0}" />
+					  <table class="mTable">
+						<c:forEach items="${model.alternativeLabels }" var="altLabel">
+							<c:set var="outerCount" value="${outerCount + 1 }" />
+							<c:set var="innerCount" value="${0}" />
+							<c:forEach items="${model.alternativeLabels }" var="altLabel1">
+								<c:set var="innerCount" value="${innerCount + 1 }" />
+								 <c:if test="${ innerCount gt outerCount }">
+						
+							<tr>
+								<td class="label-td"><span class="label"><c:out value="${altLabel}"></c:out></span></td>
+								<td><div class="slider" id="${critLabel}:${altLabel}:${altLabel1}"></div></td>
+								<td class="label-td" ><span class="label"><c:out value="${altLabel1}"></c:out></span></td>
+							</tr>
+						
+								</c:if>
+							</c:forEach>
+						</c:forEach>
+						</table>
+					</c:otherwise>
+				</c:choose>
+				<div class="control-group">
+					<div class="controls">
+						<div class="btn-group">
+							<c:if test="${count > 1}" >
+								<input class="btn prev" type="button" id="__${count}" value="back" />
+							</c:if>
+								<input class="btn next" type="button" id="_${count}" value="next" />
+							<c:set var="count" value="${count+1}" />
+						</div>
+					</div>
+				</div>
+		</div>
 		</c:forEach>
 		
-		</table>
-		
-		<input type="submit" >
+		<div class="control-group"  id="count_${count}"  style="display:none;">
+				<div class="controls">
+					<div class="btn-group">
+						<input class="btn prev" type="button" id="__${count}" value="back" />
+						<input id="valueSubmit" class="btn" type="button" value="submit"/>
+					</div>
+				</div>
+		</div>
 		</form>
 		
 		
 		</c:when>
-		<c:when test="${ model.status eq 'complete'}">
-				
-				<div>Model ${model.goalName } is ${model.status}</div>
-		
-		
-		</c:when>
 		</c:choose>
+		
+		
+		<div id="chart">
+		
+		</div>
 	</div>
 	
 	<!-- /container -->
@@ -159,14 +148,121 @@ width:200px;
 	<script src="/AHPwizard/resources/bootstrap-cust/js/bootstrap.min.js"></script>
     <script src="http://code.jquery.com/ui/1.9.0/jquery-ui.js"></script>
     <script>
+    
     $(function() {
-        $( ".slider" ).slider({ min:-9, max:9, value:0}).slider({
-        	   slide: function(event, ui) {console.log(ui); }
-        	});
+        $( ".slider" ).slider({ min:-8, max:8, value:0});
+        result = '';
+        $('#valueSubmit').click(
+        		function(){
+        			$('.slider').each(function(i){ 
+        				var s = $(this);
+        				result= result+','+s.attr('id')+':'+s.slider('value');
+        			});
+        			$('.input_real').each(function(i){ 
+        				var s = $(this);
+        				console.log(s.attr('id')+':'+s.attr('value'));
+        				result= result+','+s.attr('id')+':'+s.attr('value');
+        			});
+        			$.ajax({url:'evaluate',handleAs:'json', type :'post',data:{results:result }, 
+        				success:function(result){renderChart(result);}});
+        		}
+        );
+        $('#count_1').show();
+        $('.next').click( function(){
+        	var o = $(this).attr('id');
+        	var i = parseInt(o.substring(1));
+        	$('#count_'+i).hide();
+        	var n = i+1;
+        	$('#count_'+n).show();
+        });
+        $('.prev').click(function(){
+        	var o = $(this).attr('id');
+        	var i = parseInt(o.substring(2));
+        	$('#count_'+i).hide();
+        	var n = i-1;
+        	$('#count_'+n).show();
+        	$('#chart').html('');
+        });
+        
+        $('#valuePrepare').click(
+        		function(){
+        			$('.slider').each(function(i){ 
+        				var s = $(this);
+        				result= result+','+s.attr('id')+':'+s.slider('value');
+        			});
+        			
+        			$.ajax({url:'prepare',handleAs:'json', type :'post',data:{results:result }, 
+        				success:function(result){
+        					window.location = 'http://'+location.host+'/AHPwizard/prepare';
+        					}
+        			});
+        		}
+        );
+        
     });
     
     
     </script>
+    		<script type="text/javascript" src="http://code.highcharts.com/highcharts.js"></script>
+		<script type="text/javascript" >
+		var chart;
+		function renderChart( values) {
+		         var seriesVals = new Array();
+		         values=eval("("+values+")");
+		         for ( val in values ){
+		             seriesVals.push( { name: val, data: [values[val]]}  );                 
+		         }
+		         console.log( seriesVals);
+		        chart = new Highcharts.Chart({
+		            chart: {
+		                renderTo: 'chart',
+		                type: 'column'
+		            },
+		            title: {
+		                text: '${model.goalName }'
+		            },
+		            subtitle: {
+		                text: '${model.goalDescription }'
+		            },
+		            xAxis: {
+		                categories: [
+		                    'Alternatives'
+		                ]
+		            },
+		            yAxis: {
+		                min: 0,
+		                title: {
+		                    text: 'Ranking'
+		                }
+		            },
+		            legend: {
+		                layout: 'vertical',
+		                backgroundColor: '#FFFFFF',
+		                align: 'left',
+		                verticalAlign: 'top',
+		                x: 100,
+		                y: 70,
+		                floating: true,
+		                shadow: true
+		            },
+		            tooltip: {
+		                formatter: function() {
+		                    return ''+
+		                    	this.series.name +': '+ this.y;
+		                }
+		            },
+		            plotOptions: {
+		                column: {
+		                    pointPadding: 0.2,
+		                    borderWidth: 0
+		                }
+		            },
+		            series:seriesVals
+		        });
+		        $('#chart').show();
+		    
+		};
+		</script>
 	
 </body>
 </html>
