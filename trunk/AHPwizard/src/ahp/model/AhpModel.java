@@ -14,8 +14,17 @@ public class AhpModel {
 	private Map<String, PairwiseMatrix> pwAlternatives = new HashMap<String, PairwiseMatrix>();
 	private Map<String, Matrix> alternatives = new HashMap<String, Matrix>();
 	private String[] criteriaLabels;
+	private Map<String,String> criteriaType;
 	private String[] alternativeLabels;
 	private String status;
+
+	public Map<String, String> getCriteriaType() {
+		return criteriaType;
+	}
+
+	public void setCriteriaType(Map<String, String> criteriaType) {
+		this.criteriaType = criteriaType;
+	}
 
 	public String[] getCriteriaLabels() {
 		return criteriaLabels;
@@ -119,5 +128,9 @@ public class AhpModel {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+	
+	public String getCriteriaType( String type ){
+		return criteriaType.get(type);
 	}
 }
