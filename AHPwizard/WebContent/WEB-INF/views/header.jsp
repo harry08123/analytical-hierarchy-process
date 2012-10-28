@@ -24,8 +24,14 @@ margin:20px;
 	width:150px;
 }
 .mTable{
-	width:550px;
+	width:700px;
 }
+.message_td{
+	width:200px;
+}
+.ui-slider-range { 
+	background: #729fcf !important;
+	}
 </style>
 <link
 	href="/AHPwizard/resources/bootstrap-cust/css/bootstrap-responsive.css"

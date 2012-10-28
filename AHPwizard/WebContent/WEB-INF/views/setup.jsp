@@ -120,12 +120,12 @@
          $('#setup').click(
         		function(){
         			var result = '';
-        			$('#criteriaList div').each(function(i){ 
+        			$('#criteriaList div p').each(function(i){ 
         				var s = $(this);
         				result= result+','+'criteria:'+s.html();
         			});
         			
-        			$('#alternativeList div').each(function(i){ 
+        			$('#alternativeList div p').each(function(i){ 
         				var s = $(this);
         				result= result+','+'alternative:'+s.html();
         			});
@@ -138,15 +138,13 @@
         			});
         		}
         );
-         var div = '<div>';
-         var divE = "</div>";
+         var div = '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button><p>';
+         var divE = "</p></div>";
         $('#addCriteria').click(function(){
-        	 console.log('add criteria');
         	 $('#criteriaList').append(div+$('#cName').attr('value')+ ':' + $('#cType').val() +divE);
-        	 $('#cName').attr('value', '')
+        	 $('#cName').attr('value', '');
         });
         $('#addAlternative').click(function(){
-        	 console.log('add alternative');
         	 $('#alternativeList').append(div+$('#aName').attr('value')+divE);
         	 $('#aName').attr('value', '')
         });
