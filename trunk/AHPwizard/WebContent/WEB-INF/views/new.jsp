@@ -38,11 +38,15 @@
 						<c:forEach items="${model.criteriaLabels }" var="altLabel1">
 							<c:set var="innerCount" value="${innerCount + 1 }" />
 							 <c:if test="${ innerCount gt outerCount }">
-								
 									<tr>
 										<td class="label-td"><c:out value="${altLabel}"></c:out></td>
 										<td><div class="slider" id="${critLabel}:${altLabel}:${altLabel1}"></div></td>
 										<td class="label-td"><c:out value="${altLabel1}"></c:out></td>
+										<td class="message_td">
+										    <div class="alert alert-info">
+    											is EQUAL
+   											</div>
+										</td>
 									</tr>
 								
 							</c:if>
@@ -97,6 +101,11 @@
 								<td class="label-td"><span class="label"><c:out value="${altLabel}"></c:out></span></td>
 								<td><div class="slider" id="${critLabel}:${altLabel}:${altLabel1}"></div></td>
 								<td class="label-td" ><span class="label"><c:out value="${altLabel1}"></c:out></span></td>
+								<td class="message_td">
+								<div class="alert alert-info">
+    									is EQUAL
+   								</div>
+								</td>
 							</tr>
 						
 								</c:if>
@@ -148,9 +157,35 @@
 	<script src="/AHPwizard/resources/bootstrap-cust/js/bootstrap.min.js"></script>
     <script src="http://code.jquery.com/ui/1.9.0/jquery-ui.js"></script>
     <script>
+    var ratings = new Array(9);
+    ratings[0] = 'EQUAL';
+    ratings[1] = 'BETWEEN MODERATE EQUAL';
+    ratings[2] = 'MODERATE';
+    ratings[3] = 'BETWEEN STRONG AND EQUAL';
+    ratings[4] = 'STRONG';
+    ratings[5] = 'BETWEEN VERY STRONG AND STRONG';
+    ratings[6] = 'VERY STRONG';
+    ratings[7] = 'BETWEEN VERY STRONG AND EXTREME';
+    ratings[8] = 'EXTREME';
     
     $(function() {
-        $( ".slider" ).slider({ min:-8, max:8, value:0});
+        $( ".slider" ).slider({ min:-8, max:8, value:0,
+        	change : function(event, ui){
+        		console.log('slider change');
+        		var val = ui.value;
+        		var absVal = Math.abs(val)
+        		var label = '';
+        		var td = $(this).closest('td');
+        		var tdNext = td.next('td');
+        		if ( val > 0 ){
+        			label = tdNext.text();
+        		}else if (val < 0 ) {
+        			label = td.prev('td').text();
+        		}
+        		console.log( label + ' is ' + ratings[absVal]);
+        		tdNext.next('td').children('div.alert').html( '<h4>'+label + '</h4> is ' + ratings[absVal] );
+        	},
+        });
         result = '';
         $('#valueSubmit').click(
         		function(){
@@ -203,8 +238,8 @@
     
     
     </script>
-    		<script type="text/javascript" src="http://code.highcharts.com/highcharts.js"></script>
-		<script type="text/javascript" >
+    <script type="text/javascript" src="http://code.highcharts.com/highcharts.js"></script>
+	<script type="text/javascript" >
 		var chart;
 		function renderChart( values) {
 		         var seriesVals = new Array();
@@ -262,7 +297,7 @@
 		        $('#chart').show();
 		    
 		};
-		</script>
+	</script>
 	
 </body>
 </html>
