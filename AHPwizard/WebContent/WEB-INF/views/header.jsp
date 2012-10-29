@@ -32,6 +32,10 @@ margin:20px;
 .ui-slider-range { 
 	background: #729fcf !important;
 	}
+.c-align{
+	text-align:center;
+	padding-top:15px;
+}
 </style>
 <link
 	href="/AHPwizard/resources/bootstrap-cust/css/bootstrap-responsive.css"

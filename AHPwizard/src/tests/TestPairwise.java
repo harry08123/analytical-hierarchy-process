@@ -51,12 +51,14 @@ public class TestPairwise {
 
 		// Set the reliability pairwise
 		PairwiseMatrix reliability = new PairwiseMatrix(alternativeLabels);
-		reliability.setPairwiseByLabel("Civic", "Saturn", 2.0);
-		reliability.setPairwiseByLabel("Civic", "Escort", 5.0);
-		reliability.setPairwiseByLabel("Saturn", "Escort", 3.0);
-		reliability.setPairwiseByLabel("Saturn", "Clio", 2.0);
+		reliability.setPairwiseByLabel("Civic", "Saturn", 1.0 );// 2.0);
+		reliability.setPairwiseByLabel("Civic", "Escort", 1.0 );// 5.0);
+		reliability.setPairwiseByLabel("Saturn", "Escort", 1.0 );// 3.0);
+		reliability.setPairwiseByLabel("Saturn", "Clio", 1.0 );// 2.0);
 		// reliability.setPairwiseByLabel("Clio", "Civic", 1.0);
-		reliability.setPairwiseByLabel("Clio", "Escort", 4.0);
+		reliability.setPairwiseByLabel("Clio", "Escort", 1.0 );// 4.0);
+		System.out.println("Reliability backing matrix values with everything equal");
+		reliability.getBackingMatrix().print(reliability.getBackingMatrix().getColumnDimension(), 3);
 		model.addToPw("Reliability", reliability);
 
 		// Fuel economy is quantitative so no pairwise just the known values;
@@ -67,6 +69,7 @@ public class TestPairwise {
 		fuelEco.set(Arrays.binarySearch(alternativeLabels, "Clio"), 0, 28.0);
 		model.addToAl("Fuel Econony", fuelEco);
 
+		
 		Map<String, Double> result = model.getResult();
 
 		for (String key : result.keySet()) {

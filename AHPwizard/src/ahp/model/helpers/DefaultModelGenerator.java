@@ -17,14 +17,13 @@ public class DefaultModelGenerator {
 		project.setGoalName(GOAL_NAME);
 		project.setGoalDescription("The default Logistics and Transport model");
 		
-		String criteriaLabels[] = new String[7];
+		String criteriaLabels[] = new String[6];
 		criteriaLabels[0] = "Cost";
 		criteriaLabels[1] = "Travel Time";
 		criteriaLabels[2] = "Safety";
 		criteriaLabels[3] = "Pollution";
-		criteriaLabels[4] = "Noise";
-		criteriaLabels[5] = "Accessabilty";
-		criteriaLabels[6] = "Energy Consumption";
+		criteriaLabels[4] = "Accessabilty";
+		criteriaLabels[5] = "Energy Consumption";
 		
 		Map <String,String> cMap = new HashMap<String,String>();
 		cMap.put(criteriaLabels[0], CriteriaType.REAL_VALUE );
@@ -33,7 +32,6 @@ public class DefaultModelGenerator {
 		cMap.put(criteriaLabels[3] , CriteriaType.PAIRWISE_VALUE );
 		cMap.put(criteriaLabels[4] , CriteriaType.PAIRWISE_VALUE );
 		cMap.put(criteriaLabels[5] , CriteriaType.PAIRWISE_VALUE );
-		cMap.put(criteriaLabels[6] , CriteriaType.PAIRWISE_VALUE );
 		
 		Arrays.sort(criteriaLabels);
 		project.setCriteriaLabels(criteriaLabels);
@@ -41,11 +39,10 @@ public class DefaultModelGenerator {
 		project.setCriteriaType(cMap);
 
 		// alternative labels
-		String alternativeLabels[] = new String[4];
+		String alternativeLabels[] = new String[3];
 		alternativeLabels[0] = "Rail";
 		alternativeLabels[1] = "Sea";
 		alternativeLabels[2] = "Road";
-		alternativeLabels[3] = "Air";
 		
 		Arrays.sort(alternativeLabels);
 		project.setAlternativeLabels(alternativeLabels);
