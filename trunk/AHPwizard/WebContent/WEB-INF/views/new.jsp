@@ -30,7 +30,7 @@
 		<form class="form-horizontal" method="post" action="prepare">
 			<c:set var="count" value="${1}" />
 			<div id="count_${count}" class="slider_container">
-				<table class="mTable">
+				
 					<c:set var="outerCount" value="${0}" />
 					<c:forEach items="${model.criteriaLabels }" var="altLabel">
 						<c:set var="outerCount" value="${outerCount + 1 }" />
@@ -38,21 +38,19 @@
 						<c:forEach items="${model.criteriaLabels }" var="altLabel1">
 							<c:set var="innerCount" value="${innerCount + 1 }" />
 							 <c:if test="${ innerCount gt outerCount }">
-									<tr>
-										<td class="label-td"><c:out value="${altLabel}"></c:out></td>
-										<td><div class="slider" id="${critLabel}:${altLabel}:${altLabel1}"></div></td>
-										<td class="label-td"><c:out value="${altLabel1}"></c:out></td>
-										<td class="message_td">
-										    <div class="alert alert-info">
-    											is EQUAL
-   											</div>
-										</td>
-									</tr>
-								
+							 <div class="row">
+								<div class="span2 c-align"><c:out value="${altLabel}"></c:out></div>
+								<div class="span3"><div class="slider" id="${critLabel}:${altLabel}:${altLabel1}"></div></div>
+								<div class="span2 c-align"><c:out value="${altLabel1}"></c:out></div>
+								<div class="span5">
+								    <div class="alert alert-info">
+    									<small>is EQUAL</small>
+   									</div>
+   								</div>
+							</div>	
 							</c:if>
 						</c:forEach>
 					</c:forEach>
-				</table>
 			</div>
 			<div class="control-group"  id="count_${count}">
 				<div class="controls">
@@ -89,29 +87,25 @@
 				  </c:when>
 				  <c:otherwise>
 					  <c:set var="outerCount" value="${0}" />
-					  <table class="mTable">
 						<c:forEach items="${model.alternativeLabels }" var="altLabel">
 							<c:set var="outerCount" value="${outerCount + 1 }" />
 							<c:set var="innerCount" value="${0}" />
 							<c:forEach items="${model.alternativeLabels }" var="altLabel1">
 								<c:set var="innerCount" value="${innerCount + 1 }" />
 								 <c:if test="${ innerCount gt outerCount }">
-						
-							<tr>
-								<td class="label-td"><span class="label"><c:out value="${altLabel}"></c:out></span></td>
-								<td><div class="slider" id="${critLabel}:${altLabel}:${altLabel1}"></div></td>
-								<td class="label-td" ><span class="label"><c:out value="${altLabel1}"></c:out></span></td>
-								<td class="message_td">
-								<div class="alert alert-info">
-    									is EQUAL
-   								</div>
-								</td>
-							</tr>
-						
+							<div class="row" >
+								<div class="span2 c-align"><c:out value="${altLabel}"></c:out></div>
+								<div class="span3"><div class="slider" id="${critLabel}:${altLabel}:${altLabel1}"></div></div>
+								<div class="span2 c-align" ><c:out value="${altLabel1}"></c:out></div>
+								<div class="span5">
+									<div class="alert alert-info">
+	    									<small>is EQUAL</small>
+	   								</div>
+								</div>
+							</div>
 								</c:if>
 							</c:forEach>
 						</c:forEach>
-						</table>
 					</c:otherwise>
 				</c:choose>
 				<div class="control-group">
@@ -142,7 +136,9 @@
 		</c:when>
 		</c:choose>
 		
-		
+	<div id="error" class="alert hide">
+	    <small><strong>Warning!</strong></small>
+    </div>
 		<div id="chart">
 		
 		</div>
@@ -159,7 +155,7 @@
     <script>
     var ratings = new Array(9);
     ratings[0] = 'EQUAL';
-    ratings[1] = 'BETWEEN MODERATE EQUAL';
+    ratings[1] = 'BETWEEN MODERATE AND EQUAL';
     ratings[2] = 'MODERATE';
     ratings[3] = 'BETWEEN STRONG AND EQUAL';
     ratings[4] = 'STRONG';
@@ -169,21 +165,26 @@
     ratings[8] = 'EXTREME';
     
     $(function() {
+    	$.ajaxSetup ({
+    	    // Disable caching of AJAX responses
+    	    cache: false
+    	});
+    	
         $( ".slider" ).slider({ min:-8, max:8, value:0,
         	change : function(event, ui){
-        		console.log('slider change');
         		var val = ui.value;
         		var absVal = Math.abs(val)
         		var label = '';
-        		var td = $(this).closest('td');
-        		var tdNext = td.next('td');
+        		var div = $(this).parent('div');
+        		console.log(div);
+        		var divNext = div.next('div');
         		if ( val > 0 ){
-        			label = tdNext.text();
+        			label = divNext.text();
         		}else if (val < 0 ) {
-        			label = td.prev('td').text();
+        			label = div.prev('div').text();
         		}
         		console.log( label + ' is ' + ratings[absVal]);
-        		tdNext.next('td').children('div.alert').html( '<h4>'+label + '</h4> is ' + ratings[absVal] );
+        		divNext.next('div').children('div').html( '<small><strong>'+label + '</strong> is ' + ratings[absVal]+'</small>' );
         	},
         });
         result = '';
@@ -199,7 +200,17 @@
         				result= result+','+s.attr('id')+':'+s.attr('value');
         			});
         			$.ajax({url:'evaluate',handleAs:'json', type :'post',data:{results:result }, 
-        				success:function(result){renderChart(result);}});
+        					success:function(result){
+        						if(result.indexOf('//success' )== 1) {
+        							$('#error').addClass('hide');
+        							renderChart(result);
+        						}else if (result.indexOf('//error' )== 1 ){
+        							$('#error').children('small').html('<strong>Warning</strong><pre>'+result+"</pre>");
+        							$('#error').removeClass('hide');
+        						}else{
+        							alert( result)
+        						}
+        					}});
         		}
         );
         $('#count_1').show();

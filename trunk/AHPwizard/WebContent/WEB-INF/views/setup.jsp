@@ -146,7 +146,7 @@
         });
         $('#addAlternative').click(function(){
         	 $('#alternativeList').append(div+$('#aName').attr('value')+divE);
-        	 $('#aName').attr('value', '')
+        	 $('#aName').attr('value', '');
         });
     });
     

@@ -1,13 +1,18 @@
 package ahp.model;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import Jama.Matrix;
 
-public class AhpModel {
+public class AhpModel implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String goalName;
 	private String goalDescription;
 	private PairwiseMatrix criteria;
@@ -18,6 +23,34 @@ public class AhpModel {
 	private String[] alternativeLabels;
 	private String status;
 
+	
+	public AhpModel() {
+		this.status = "new";
+	}
+	
+	
+	
+	public void setPwAlternatives(Map<String, PairwiseMatrix> pwAlternatives) {
+		this.pwAlternatives = pwAlternatives;
+	}
+
+
+
+	public void setAlternatives(Map<String, Matrix> alternatives) {
+		this.alternatives = alternatives;
+	}
+
+
+
+	public AhpModel(String goalName, String goalDescription,
+			String[] criteriaLabels, String[] alternativeLabels) {
+		this.goalName = goalName;
+		this.goalDescription = goalDescription;
+		this.criteriaLabels = criteriaLabels;
+		this.alternativeLabels = alternativeLabels;
+		this.status = "new";
+	}
+	
 	public Map<String, String> getCriteriaType() {
 		return criteriaType;
 	}
@@ -40,19 +73,6 @@ public class AhpModel {
 
 	public void setAlternativeLabels(String[] alternativeLabels) {
 		this.alternativeLabels = alternativeLabels;
-	}
-
-	public AhpModel() {
-		this.status = "new";
-	}
-	
-	public AhpModel(String goalName, String goalDescription,
-			String[] criteriaLabels, String[] alternativeLabels) {
-		this.goalName = goalName;
-		this.goalDescription = goalDescription;
-		this.criteriaLabels = criteriaLabels;
-		this.alternativeLabels = alternativeLabels;
-		this.status = "new";
 	}
 
 	public String getGoalName() {
@@ -105,12 +125,10 @@ public class AhpModel {
 		double[][] arrays = new double[noAlternatives][noCriteria];
 		for (String criteriaLabel : criteriaLabels) {
 			int index = Arrays.binarySearch(criteriaLabels, criteriaLabel);
+			System.out.println( "Index of " +  criteriaLabel + " is " + index);
 			for (int x = 0; x < noAlternatives; x++) {
-				arrays[Arrays.binarySearch(alternativeLabels,
-						alternativeLabels[x])][index] = alternatives.get(
-						criteriaLabel).get(
-						Arrays.binarySearch(alternativeLabels,
-								alternativeLabels[x]), 0);
+				int indexOfAlternative = Arrays.binarySearch(alternativeLabels, alternativeLabels[x]);
+				arrays[indexOfAlternative][index] = alternatives.get(criteriaLabel).get(indexOfAlternative, 0);
 			}
 		}
 		Matrix m = new Matrix(arrays);

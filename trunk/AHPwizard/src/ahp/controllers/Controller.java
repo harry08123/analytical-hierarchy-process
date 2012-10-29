@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,12 +33,12 @@ import com.rits.cloning.Cloner;
 
 @org.springframework.stereotype.Controller
 @org.springframework.web.bind.annotation.RequestMapping(value = { "/index",
-		"new", "evaluate", "prepare" ,"setup"})
+		"new", "evaluate", "prepare" ,"setup","/"})
 public class Controller {
 	private static Context envCtx;
 	private static DataSource ds;
 	/** The mapper. */
-	private ObjectMapper mapper = new ObjectMapper();
+	private ObjectMapper mapper = new ObjectMapper(); 
 	/*static {
 		try {
 			envCtx = (Context) new InitialContext().lookup("java:comp/env");
@@ -48,7 +49,7 @@ public class Controller {
 		}
 	}
 */
-	@RequestMapping(value = { "/index" }, method = RequestMethod.GET)
+	@RequestMapping(value = { "/index","/" }, method = RequestMethod.GET)
 	public ModelAndView doGetIndex(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session) {
 		Object o = session.getAttribute("projects");
@@ -163,6 +164,9 @@ public class Controller {
 		Map<String, PairwiseMatrix> pwMap = new HashMap<String, PairwiseMatrix>();
 		Map<String, Matrix> realMap = new HashMap<String, Matrix>();
 		AhpModel project = (AhpModel) session.getAttribute("selectedProject");
+		
+		project.setPwAlternatives(new HashMap<String, PairwiseMatrix>());
+		project.setAlternatives(new HashMap<String, Matrix>());
 		PairwiseResult[] bean = new PairwiseResult[results.length];
 		int c = 0;
 		for ( String r : results ){
@@ -170,12 +174,16 @@ public class Controller {
 			 System.out.println(r);
 			 rs.setResult(r);
 			 System.out.println(rs.toString());
-			 bean[c++] = rs;
+			 if ( rs.isValid()){
+				 bean[c++] = rs;
+			 }else{
+				 System.out.println("Invalid result not included");
+				 bean = (PairwiseResult[]) ArrayUtils.remove(bean, bean.length-1);
+			 }
 		}
 		
 		String[] altLabels = project.getAlternativeLabels();
 		for (PairwiseResult result : bean) {
-			if (!result.isValid())continue;
 			if ( result.getType().equals(CriteriaType.REAL_VALUE )){
 				Matrix m;
 				if (realMap.containsKey(result.getMatrixLabel())) {
@@ -190,20 +198,28 @@ public class Controller {
 					pwMap.put(result.getMatrixLabel(),
 							new PairwiseMatrix(project.getAlternativeLabels()));
 				}
-				if ( result.isNoWinner() ) continue;
 				pwMap.get(result.getMatrixLabel()).setPairwiseByLabel(
 						result.getWinner(), result.getLoser(), result.getScore());
 				}
 		}
+		
+		boolean isConsistient = true;
+		String errorMessage = "";
 		for (String key : pwMap.keySet() ){
 			project.addToPw(key, pwMap.get(key));
+			if ( !pwMap.get(key).isConsistient() ){
+				isConsistient = false;
+				errorMessage += key + " is " + (pwMap.get(key).isConsistient() ? "consistient" : "inconsistient")+"\n";
+			}
 		}
-		
 		for (String key : realMap.keySet() ){
-			project.addToAl(key, realMap.get(key));
+			project.addToAl(key, realMap.get(key));//normalised
+		}
+		if ( !isConsistient){
+			return new ModelAndView("jsonResult", "result","//error\n" + errorMessage);
 		}
 		project.setStatus("complete");
-		return new ModelAndView("jsonResult", "result",mapper.writeValueAsString( project.getResult()));
+		return new ModelAndView("jsonResult", "result","//success\n"+mapper.writeValueAsString( project.getResult()));
 	}
 
 	
