@@ -77,7 +77,7 @@
 							
 				  	<c:forEach items="${model.alternativeLabels }" var="altLabel">
 						<tr>
-							<td class="label-td"><span class="label"><c:out value="${altLabel}"></c:out></span></td>
+							<td class="label-td"><c:out value="${altLabel}"></c:out></td>
 							<td><input type="text" class="input_real" id="${critLabel}:${altLabel}"/></td>
 							<td class="label-td" ></td>
 						</tr>			
