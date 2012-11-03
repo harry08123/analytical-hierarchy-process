@@ -110,15 +110,12 @@ public class PairwiseMatrix implements Serializable{
 	}
 	
 	public boolean isConsistient(){
-		if (size<=2) return true;
-		System.out.println("Size " + size);
-		System.out.println("Max Eigenvalue " + getMaxEigenValue());
-		System.out.println("Inconsistency " + getRandomInconsistency() );
-		System.out.println( ( getMaxEigenValue()- size) / (size-1.0) + " / " +  getRandomInconsistency() );
+		if ( size<=2) return true;
 		double ratio = ((getMaxEigenValue()- size)/ (size-1.0))
 				/getRandomInconsistency();
 		System.out.println(ratio);
 	    if (ratio <= 0.1) return true;
-	    else return false;
+	    return false;
 	  }
+
 }

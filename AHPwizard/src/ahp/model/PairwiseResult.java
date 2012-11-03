@@ -37,8 +37,13 @@ public class PairwiseResult {
 	public void setResult(String result) {
 		if (result == null) return;
 		String[] split= result.split(delimiter);
-		if (split.length == 4) setPairwiseResult(split);
-		if (split.length == 3) setRealNumResult(split);
+		if (split.length != 4 ) {isValid = false;return;}
+		if (split[1].equalsIgnoreCase(CriteriaType.REAL_HIGHER_IS_BETTER) || 
+				split[1].equalsIgnoreCase(CriteriaType.REAL_LOWER_IS_BETTER) ){
+			setRealNumResult(split);
+		}else{
+			setPairwiseResult(split);
+		}
 		
 	}
 	
@@ -67,10 +72,10 @@ public class PairwiseResult {
 	
 	private void setRealNumResult(String[] split){
 		
-		type = CriteriaType.REAL_VALUE;
+		this.type = split[1];
 		noWinner = true;
-		score = Double.parseDouble(split[2]);
-		winner = split[1];
+		score = Double.parseDouble(split[3]);
+		winner = split[2];
 		matrixLabel = split[0];
 		isValid = true;
 	}

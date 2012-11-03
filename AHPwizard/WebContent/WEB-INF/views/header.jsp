@@ -14,11 +14,10 @@ body {
 	/* 60px to make the container go all the way to the bottom of the topbar */
 }
 .slider{
-width:200px;
 margin:20px;
 }
 .slider_container{
-	display:none;
+	
 }
 .label_td{
 	width:150px;
