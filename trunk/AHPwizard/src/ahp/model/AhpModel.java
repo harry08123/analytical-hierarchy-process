@@ -22,12 +22,17 @@ public class AhpModel implements Serializable{
 	private Map<String,String> criteriaType;
 	private String[] alternativeLabels;
 	private String status;
-
+	private boolean checkConsistency = true;
+	
 	
 	public AhpModel() {
 		this.status = "new";
 	}
 	
+	public AhpModel(boolean checkConsistency) {
+		this.status = "new";
+		this.setCheckConsistency(checkConsistency);
+	}
 	
 	
 	public void setPwAlternatives(Map<String, PairwiseMatrix> pwAlternatives) {
@@ -150,5 +155,13 @@ public class AhpModel implements Serializable{
 	
 	public String getCriteriaType( String type ){
 		return criteriaType.get(type);
+	}
+
+	public boolean isCheckConsistency() {
+		return checkConsistency;
+	}
+
+	public void setCheckConsistency(boolean checkConsistency) {
+		this.checkConsistency = checkConsistency;
 	}
 }

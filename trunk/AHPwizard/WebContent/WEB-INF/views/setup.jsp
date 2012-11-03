@@ -23,14 +23,20 @@
 				<label class="control-label" for="goalName">Name</label>
 				<div class="controls">
 					<input type="text" id="goalName" name="goalName"
-						placeholder="goalName" />
+						placeholder="Goal Name" />
 				</div>
 			</div>
 			<div class="control-group">
 				<label class="control-label" for="goalDescription">Description</label>
 				<div class="controls">
 					<input type="text" id="goalDescription" name="goalDescription"
-						placeholder="goalDescription" />
+						placeholder="Goal Description" />
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="goalDescription">Check Consistency</label>
+				<div class="controls">
+					<input type="checkbox" id="checkConsistency" name="checkConsistency" checked="checked"/>
 				</div>
 			</div>
 			<div class="span1" ></div>
@@ -49,12 +55,12 @@
 			</div>
 			<div class="control-group">
 				<div class="controls">
-					<input class="btn" type="button" value="Create Project" id="setup"/>
+					<input class="btn  btn-primary" type="button" value="Create Project" id="setup"/>
 				</div>
 			</div>
 			
 		</form>
-		<div class="modal hide fade" id="criteriaModal" tabindex="-1" role="dialog"
+		<div class="modal hide" id="criteriaModal" tabindex="-1" role="dialog"
 			aria-labelledby="criteriaModalLabel" aria-hidden="true">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal"
@@ -72,7 +78,8 @@
 					<div class="controls">
 							<select id="cType"  name="cType">
 								<option>PAIRWISE</option>
-								<option>REAL</option>
+								<option>REAL_HIGHER_IS_BETTER</option>
+								<option>REAL_LOWER_IS_BETTER</option>
 							</select>
 					</div>
 				</div>
@@ -83,7 +90,7 @@
 			</div>
 		</div>
 
-		<div class="modal hide fade" id="alternativeModal" tabindex="-1" role="dialog"
+		<div class="modal hide" id="alternativeModal" tabindex="-2" role="dialog"
 			aria-labelledby="alternativeModalLabel" aria-hidden="true">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal"
@@ -129,7 +136,7 @@
         				var s = $(this);
         				result= result+','+'alternative:'+s.html();
         			});
-        			result=result+',goalName:'+$('#goalName').val()+',goalDescription:'+$('#goalDescription').val();
+        			result=result+',goalName:'+$('#goalName').val()+',goalDescription:'+$('#goalDescription').val()+',checkConsistency:'+$('#checkConsistency').is(':checked');
         			console.log(result);
         			$.ajax({url:'setup',handleAs:'json', type :'post',data:{results:result }, 
         				success:function(result){

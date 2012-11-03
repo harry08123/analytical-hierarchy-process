@@ -12,6 +12,7 @@
 					<ul class="nav">
 						<li  class="active"><a href="index">Projects</a></li>
 						<li class="active"><a href="setup">Set Up</a></li>
+						<li class="active"><a href="list">Active Projects</a></li>
 						<!-- <li class="active"><a href="new">Evaluate</a></li> -->
 					</ul>
 				</div>

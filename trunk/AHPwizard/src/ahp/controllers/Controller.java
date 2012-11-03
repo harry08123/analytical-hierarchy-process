@@ -7,11 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.naming.Context;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,10 +18,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import Jama.Matrix;
+import ahp.cache.CacheAccessor;
+import ahp.model.AggregateResult;
 import ahp.model.AhpModel;
 import ahp.model.CriteriaType;
 import ahp.model.PairwiseMatrix;
 import ahp.model.PairwiseResult;
+import ahp.model.User;
 import ahp.model.helpers.DefaultModelGenerator;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -33,26 +34,16 @@ import com.rits.cloning.Cloner;
 
 @org.springframework.stereotype.Controller
 @org.springframework.web.bind.annotation.RequestMapping(value = { "/index",
-		"new", "evaluate", "prepare" ,"setup","/"})
+		"new", "evaluate", "prepare" ,"setup","/", "/cache","/refresh","/list"})
 public class Controller {
-	private static Context envCtx;
-	private static DataSource ds;
 	/** The mapper. */
 	private ObjectMapper mapper = new ObjectMapper(); 
-	/*static {
-		try {
-			envCtx = (Context) new InitialContext().lookup("java:comp/env");
-			ds = (DataSource) envCtx.lookup("jdbc/ahp");
-		} catch (NamingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-*/
+
 	@RequestMapping(value = { "/index","/" }, method = RequestMethod.GET)
 	public ModelAndView doGetIndex(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session) {
-		Object o = session.getAttribute("projects");
+		CacheAccessor cache = new CacheAccessor();
+		Object o = cache.getObjectFromCache("projects" ,CacheAccessor.ProjectReference);
 		Map<String,AhpModel> map;
 		if ( o != null ){
 			map = (Map<String,AhpModel>) o;
@@ -63,8 +54,16 @@ public class Controller {
 		if ( ! map.containsKey(DefaultModelGenerator.GOAL_NAME)){
 			AhpModel defaultModel = DefaultModelGenerator.generateDefaultModel();
 			map.put(defaultModel.getGoalName(), defaultModel);
+			
 		}
-		session.setAttribute("projects", map);
+		if ( ! map.containsKey(DefaultModelGenerator.GOAL_NAME_CAR)){
+			AhpModel carModel = DefaultModelGenerator.generateCarModel();
+			map.put(carModel.getGoalName(), carModel);
+		}
+		
+		
+		cache.putObjectInCacheIfNull("projects", map,CacheAccessor.ProjectReference);
+		
 		return new ModelAndView("index", "projects", map );
 	}
 
@@ -90,6 +89,8 @@ public class Controller {
 				project.setGoalName(tokens[1]);
 			}else if ( tokens[0].equals("goalDescription")){
 				project.setGoalDescription(tokens[1]);
+			}else if ( tokens[0].equals("checkConsistency")){
+				project.setCheckConsistency(Boolean.valueOf(tokens[1]));
 			}
 		}
 		
@@ -104,13 +105,14 @@ public class Controller {
 		project.setAlternativeLabels(alternativeLabels);
 		
 		project.setStatus("prepare");
-		Object o = session.getAttribute("projects");
+		CacheAccessor cache = new CacheAccessor();
+		Object o = cache.getObjectFromCache("projects",CacheAccessor.ProjectReference);
 		Map<String,AhpModel> map;
 		if ( o != null ){
 			map = (Map<String,AhpModel>) o;
 		}else{
 			map = new HashMap<String,AhpModel>();
-			session.setAttribute("projects", map);
+			cache.putObjectInCache("projects", map, CacheAccessor.ProjectReference);
 			//TODO set up the default project here
 		}
 		map.put(project.getGoalName() , project);
@@ -122,7 +124,8 @@ public class Controller {
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
 	public ModelAndView doGetview(HttpSession session, String projectName, HttpServletRequest request,
 			HttpServletResponse response) {
-		Map<String,AhpModel> map = (Map<String,AhpModel>) session.getAttribute("projects");
+		CacheAccessor cache = new CacheAccessor();
+		Map<String,AhpModel> map = (Map<String,AhpModel>) cache.getObjectFromCache("projects",CacheAccessor.ProjectReference);
 		AhpModel project = map.get(projectName);
 		Cloner cloner=new Cloner();
 
@@ -152,8 +155,45 @@ public class Controller {
 	public ModelAndView doPostPrepare(@RequestParam String[] results, HttpSession session,
 			HttpServletRequest request, HttpServletResponse response) {
 		AhpModel project = (AhpModel) session.getAttribute("selectedProject");
-		project.setStatus("prepare");	
-		return new ModelAndView("new", "model", project);
+		PairwiseMatrix criteria = project.getCriteria();
+
+		for ( String r : results ){
+			 PairwiseResult rs = new PairwiseResult();
+			 rs.setResult(r);
+			 if ( rs.isValid()){
+				 criteria.setPairwiseByLabel(rs.getWinner(), rs.getLoser(), rs.getScore());
+			 }else{
+				 System.out.println("Invalid result not included");
+			 }
+		}
+		
+		if (project.isCheckConsistency() && !criteria.isConsistient()){
+			return new ModelAndView("jsonResult", "result","//error\n" + "Criteria are not consistient");
+		}
+		project.setStatus("prepare");
+		return new ModelAndView("jsonResult", "result","//success\n");
+		
+	}
+	
+	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	public ModelAndView doCacheList( HttpSession session,
+			HttpServletRequest request, HttpServletResponse response) {
+		CacheAccessor cache = new CacheAccessor();
+		
+		return new ModelAndView("cache", "aggregates", cache.getAllObjectsInCache(CacheAccessor.Aggregates));
+		
+	}
+	
+	@RequestMapping(value = "/cache", method = RequestMethod.GET)
+	public ModelAndView doCacheAction( @RequestParam String aggregate, HttpSession session,
+			HttpServletRequest request, HttpServletResponse response) {
+		CacheAccessor cache = new CacheAccessor();
+		if ( aggregate.equalsIgnoreCase("all")){
+			cache.clear();
+		}else{
+			cache.destroy(aggregate,CacheAccessor.Aggregates);
+		}
+		return new ModelAndView("cache", "aggregates", cache.getAllObjectsInCache(CacheAccessor.Aggregates));
 		
 	}
 	
@@ -171,9 +211,7 @@ public class Controller {
 		int c = 0;
 		for ( String r : results ){
 			 PairwiseResult rs = new PairwiseResult();
-			 System.out.println(r);
 			 rs.setResult(r);
-			 System.out.println(rs.toString());
 			 if ( rs.isValid()){
 				 bean[c++] = rs;
 			 }else{
@@ -184,7 +222,10 @@ public class Controller {
 		
 		String[] altLabels = project.getAlternativeLabels();
 		for (PairwiseResult result : bean) {
-			if ( result.getType().equals(CriteriaType.REAL_VALUE )){
+			String type = result.getType();
+			int denom = type.equals( CriteriaType.REAL_HIGHER_IS_BETTER ) ? 0 : 
+				type.equals( CriteriaType.REAL_LOWER_IS_BETTER ) ? 1 : -1;
+			if ( denom > -1 ){
 				Matrix m;
 				if (realMap.containsKey(result.getMatrixLabel())) {
 					m = realMap.get(result.getMatrixLabel());
@@ -192,7 +233,8 @@ public class Controller {
 					m = new Matrix(altLabels.length, 1);
 					realMap.put(result.getMatrixLabel() , m);
 				}
-				m.set(Arrays.binarySearch(altLabels, result.getWinner() ), 0, result.getScore());
+				double score = denom > 0 ? denom/result.getScore() : result.getScore();
+				m.set(Arrays.binarySearch(altLabels, result.getWinner() ), 0, score);
 			}else{
 				if (!pwMap.containsKey(result.getMatrixLabel())) {
 					pwMap.put(result.getMatrixLabel(),
@@ -207,7 +249,7 @@ public class Controller {
 		String errorMessage = "";
 		for (String key : pwMap.keySet() ){
 			project.addToPw(key, pwMap.get(key));
-			if ( !pwMap.get(key).isConsistient() ){
+			if ( project.isCheckConsistency() && !pwMap.get(key).isConsistient() ){
 				isConsistient = false;
 				errorMessage += key + " is " + (pwMap.get(key).isConsistient() ? "consistient" : "inconsistient")+"\n";
 			}
@@ -218,25 +260,27 @@ public class Controller {
 		if ( !isConsistient){
 			return new ModelAndView("jsonResult", "result","//error\n" + errorMessage);
 		}
+		CacheAccessor cache = new CacheAccessor();
+		Object o = cache.getObjectFromCache(project.getGoalName(),CacheAccessor.Aggregates);
+		User u = new User(session.getId(), 1 );
+		AggregateResult ag;
+		if ( o == null ){
+			ag = new AggregateResult(project.getGoalName());
+			cache.putObjectInCache(project.getGoalName(), ag, CacheAccessor.Aggregates);
+		}else{
+			ag = (AggregateResult) o;
+		}
+		ag.addResult(project.getResult(), u );
 		project.setStatus("complete");
-		return new ModelAndView("jsonResult", "result","//success\n"+mapper.writeValueAsString( project.getResult()));
+		return new ModelAndView("jsonResult", "result","//success\n"+mapper.writeValueAsString( ag.getAggreateResult()));
 	}
-
 	
-	/*
-	 * String message = null; Connection connection = null; try { connection =
-	 * ds.getConnection(); PreparedStatement ps = connection
-	 * .prepareStatement("INSERT INTO project (name, description) values(?,?)");
-	 * ps.setString(1, project.getGoalName()); ps.setString(2,
-	 * project.getGoalDescription()); ps.execute(); } catch (SQLException e) {
-	 * e.printStackTrace(); message = e.getMessage(); } finally {
-	 * closeConnection(connection); } return new ModelAndView("new", "message",
-	 * message == null ? "Project Created" : message);
-	 * 
-	 * private void closeConnection(Connection connection) {
-	 * 
-	 * if (connection != null) try { connection.close(); } catch (SQLException
-	 * e) { e.printStackTrace(); } }
-	 */
+	@RequestMapping(value = "/refresh", method = RequestMethod.GET)
+	public ModelAndView doRefreshEvaluate(@RequestParam String projectName) throws JsonGenerationException, JsonMappingException, IOException{
+		CacheAccessor cache = new CacheAccessor();
+		Object o = cache.getObjectFromCache(projectName,CacheAccessor.Aggregates);
+		AggregateResult ag = (AggregateResult) o;
+		return new ModelAndView("jsonResult", "result","//success\n"+mapper.writeValueAsString( ag.getAggreateResult()));
+	}
 
 }
